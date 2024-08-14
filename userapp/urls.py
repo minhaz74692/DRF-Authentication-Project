@@ -5,6 +5,8 @@ from userapp import views
 urlpatterns = [
     path('sign-up/', views.UserRegistration.as_view()),
     path('log-in/', views.LoginView.as_view()),
+    path('password-reset/', views.ChangePasswordView.as_view()),
+    path('delete-account/', views.DeleteUserView.as_view()),
     path('users/', views.UserList.as_view()),
 ]
 

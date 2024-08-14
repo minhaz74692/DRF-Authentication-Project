@@ -15,13 +15,17 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ( 'password', 'email', 'phone','address' ,'token')
 
+    def validate_password(self, value):
+        if len(value) < 6:
+            raise serializers.ValidationError("The password must be at least 6 characters long.")
+        return value
+
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             email=validated_data.get('email' ),
             password=validated_data['password'],
             phone=validated_data.get('phone', ''),
             address=validated_data.get('address', ''),
-            
         )
         # Generate the token for the newly created user
         refresh = RefreshToken.for_user(user)
@@ -50,3 +54,21 @@ class LoginSerializer(serializers.Serializer):
 
         data['user'] = user
         return data
+    
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        if len(value) < 6:
+            raise serializers.ValidationError("The new password must be at least 6 characters long.")
+        return value
+    
+
+class DeleteUserSerializer(serializers.Serializer):
+    confirm = serializers.BooleanField(required=True)
+
+    def validate_confirm(self, value):
+        if not value:
+            raise serializers.ValidationError("You must confirm to delete your account.")
+        return value
