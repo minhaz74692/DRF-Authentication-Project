@@ -3,7 +3,7 @@ from userapp.models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication # type: ignore
-
+import uuid
 
 from django.contrib.auth import authenticate
 
@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ( 'password', 'email', 'phone','address' ,'token')
+        fields = ( 'uid', 'password', 'email', 'phone','address' ,'token')
 
     def validate_password(self, value):
         if len(value) < 6:
@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
+            uid = uuid.uuid1(),
             email=validated_data.get('email' ),
             password=validated_data['password'],
             phone=validated_data.get('phone', ''),

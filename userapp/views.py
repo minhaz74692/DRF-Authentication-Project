@@ -9,6 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication # type: ignore
 from userapp.models import CustomUser
+import uuid
+import json
 
 class UserRegistration(APIView):
     permission_classes = [AllowAny]
@@ -44,21 +46,25 @@ class LoginView(APIView):
             user.save()  # Save the updated user instance
 
             print("This is your access token:", access_token)
+            print("User Data is :", user)
+            user_data = UserSerializer(user).data
 
-            return Response({"message": "Succesfully Loged In", "token": access_token}, status=status.HTTP_200_OK)
+            return Response({"message": "Succesfully Loged In", "user_data":user_data, }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class UserList(APIView):
     def get(self, request):
         if request.method == "GET":
+            # CustomUser.objects.all().delete()
             users = CustomUser.objects.all().order_by('-id') #use '-id' for descending order return
             # serializer = UserSerializer({}, many = False)
+            print ("This is uuid1", uuid.uuid1())
             if users:
                 userData = []
                 for user in users:
                     emptyMap = {}
-                    emptyMap['id'] = user.id
+                    emptyMap['uid'] = user.uid
                     emptyMap['email'] = user.email
                     emptyMap['phone'] = user.phone
                     emptyMap['address'] = user.address

@@ -4,9 +4,11 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .managers import CustomUserManager
+import uuid
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    uid = models.CharField(default=uuid.uuid1(), max_length=1000)
     email = models.EmailField(_("email address"), unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
