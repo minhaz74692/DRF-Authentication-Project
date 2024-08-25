@@ -10,7 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication # type: ignore
 from userapp.models import CustomUser
 import uuid
-import json
 
 class UserRegistration(APIView):
     permission_classes = [AllowAny]
@@ -55,8 +54,9 @@ class LoginView(APIView):
 
 class UserList(APIView):
     def get(self, request):
+      
         if request.method == "GET":
-            # CustomUser.objects.all().delete()
+        # CustomUser.objects.all().delete()
             users = CustomUser.objects.all().order_by('-id') #use '-id' for descending order return
             # serializer = UserSerializer({}, many = False)
             print ("This is uuid1", uuid.uuid1())
@@ -73,7 +73,7 @@ class UserList(APIView):
 
                 serializer = UserSerializer(users, many = True)
                 return Response(userData, status= status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
